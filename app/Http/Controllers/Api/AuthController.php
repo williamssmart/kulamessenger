@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Passport\Bridge\AccessToken;
+use Illuminate\Support\Facades\DB;
+//use Laravel\Passport\Bridge\AccessToken;
 
 class AuthController extends Controller
 {
@@ -20,9 +21,14 @@ class AuthController extends Controller
             'compound' => 'required',
         ]);
         $validatedInfo['password'] = bcrypt($request->password);
-        $user = User::create($validatedInfo);
-        $accessToken = $user->createToken('authToken')->accessToken;
-        return response(['user'=>$user, 'access_token'=>$accessToken]);
+         if(DB::table('users')->insert($validatedInfo)){
+            $user = User::where('email' ,'=' , $validatedInfo['email'])->get();
+            $accessToken = $user[0]->createToken('authToken')->accessToken;
+            return response(['user'=>$user, 'access_token'=>$accessToken]);
+         }else{
+            return response(['user'=>[]]);
+         }
+
     }
 
     public function login(Request $request){

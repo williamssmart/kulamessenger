@@ -16,6 +16,7 @@ class AddColumnsToUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->renameColumn('name', 'fname');
             $table->string('lname', 20);
+            $table->string('profile_picture');
             $table->unsignedBigInteger('compound');
         });
     }
